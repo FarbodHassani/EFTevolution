@@ -1809,7 +1809,7 @@ void writeLightcones(metadata & sim, cosmology & cosmo, const double fourpiG, co
 
 void writeSpectra(metadata & sim, cosmology & cosmo, const double fourpiG, const double a, const int pkcount,
 #ifdef HAVE_CLASS
-background & class_background, perturbs & class_perturbs, spectra & class_spectra, icsettings & ic,
+background & class_background, perturbs & class_perturbs, icsettings & ic,
 #endif
 Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_cdm, Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_b, Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_ncdm, Field<Real> * phi, Field<Real> * pi_k ,Field<Real> * zeta, Field<Real> * chi, Field<Real> * Bi,  Field<Real> * T00_Kess, Field<Real> * T0i_Kess, Field<Real> * Tij_Kess, Field<Real> * source, Field<Real> * Sij, Field<Cplx> * scalarFT, Field<Cplx> * scalarFT_pi, Field<Cplx> * scalarFT_zeta, Field<Cplx> * BiFT, Field<Cplx> * T00_KessFT, Field<Cplx> * T0i_KessFT, Field<Cplx> * Tij_KessFT, Field<Cplx> * SijFT, PlanFFT<Cplx> * plan_phi, PlanFFT<Cplx> * plan_pi_k , PlanFFT<Cplx> * plan_zeta, PlanFFT<Cplx> * plan_chi, PlanFFT<Cplx> * plan_Bi, PlanFFT<Cplx> * plan_T00_Kess, PlanFFT<Cplx> * plan_T0i_Kess, PlanFFT<Cplx> * plan_Tij_Kess, PlanFFT<Cplx> * plan_source, PlanFFT<Cplx> * plan_Sij
 #ifdef CHECK_B
@@ -1847,7 +1847,7 @@ Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_c
 #ifdef HAVE_CLASS
 		if ((sim.radiation_flag > 0 || sim.fluid_flag > 0) && sim.gr_flag == 0)
 		{
-			projection_T00_project(class_background, class_perturbs, class_spectra, *source, *scalarFT, plan_source, sim, ic, cosmo, fourpiG, a);
+			projection_T00_project(class_background, class_perturbs, *source, *scalarFT, plan_source, sim, ic, cosmo, fourpiG, a);
 			if (sim.out_pk & MASK_DELTA)
 			{
 				Omega_ncdm = 0;
@@ -2077,7 +2077,7 @@ Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_c
 #ifdef HAVE_CLASS
 		if (sim.radiation_flag > 0 || sim.fluid_flag > 0)
 		{
-			projection_T00_project(class_background, class_perturbs, class_spectra, *source, *scalarFT, plan_source, sim, ic, cosmo, fourpiG, a);
+			projection_T00_project(class_background, class_perturbs, *source, *scalarFT, plan_source, sim, ic, cosmo, fourpiG, a);
 			if (sim.out_pk & MASK_DELTA)
 			{
 				Omega_ncdm = 0;
