@@ -2154,7 +2154,7 @@ void generateIC_basic(metadata & sim, icsettings & ic, cosmology & cosmo, const 
       // In the below by (tk_t_kess->y[i]/(tk_d_kess->x[i] * cosmo.h)/(tk_d_kess->x[i] * cosmo.h) we wasily make pi_k_Newtonian from theta_kess as we do to make initial condition in python from class data! The rest is what we do to the pi_k to make it ready for pi_k as initial condition in k-evolution
       k_ess[i] = tk_d_kess->x[i];
 
-      kess_field[i] =  - M_PI * (tk_d_kess->y[i]) * sqrt(  Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
+      kess_field[i] =  - M_PI * (tk_d_kess->y[i]*Hconf_class(1.0, cosmo)/Hconf(1., fourpiG, cosmo)) * sqrt(  Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
        / tk_t_kess->x[i];
       // zeta according to the definitions below:
       // zeta = pi'(conformal_Newtonian) + H(conf)*pi - psi
