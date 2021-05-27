@@ -315,6 +315,79 @@ void freeCLASSstructures(background & class_background, thermo & class_thermo, p
 }
 
 
+//TODO_EB: add documentation
+void loadBackground(background & class_background, const double fourpiG, gsl_spline * & qdata, const char * qname)
+{
+	int cols = 0, dcol = -1, zcol = -1;
+	char coltitles[_MAXTITLESTRINGLENGTH_] = {0};
+	char dname[16];
+	char zname[16];
+	double * a;
+	double * var;
+	double * data;
+	char * ptr;
+
+	// Get the names of the background variables as a single string
+	background_output_titles(&class_background, coltitles);
+
+	// Get the names of the background variables. If no name is passed return z
+	if (qname != NULL)
+	{
+		sprintf(dname, "%s", qname);
+    }
+	else
+	{
+		sprintf(dname, "z");
+	}
+	sprintf(zname, "z");
+
+	ptr = strtok(coltitles, _DELIMITER_);
+	while (ptr != NULL)
+	{
+		if (strncmp(ptr, dname, strlen(dname)) == 0) dcol = cols;
+		if (strncmp(ptr, zname, strlen(zname)) == 0) zcol = cols;
+		cols++;
+  	ptr = strtok(NULL, _DELIMITER_);
+	}
+
+	if (dcol < 0 || zcol < 0)
+	{
+		COUT << " error in loadBackground (HAVE_CLASS)! Unable to identify requested columns!" << endl;
+		parallel.abortForce();
+	}
+
+	data = (double *) malloc(sizeof(double) * cols * class_background.bt_size);
+	a = (double *) malloc(sizeof(double) * class_background.bt_size);
+	var = (double *) malloc(sizeof(double) * class_background.bt_size);
+
+	background_output_data(&class_background, cols, data);
+
+	for (int i = 0; i < class_background.bt_size; i++)
+	{
+		a[i] = 1. / (1. + data[i*cols + zcol]);
+		var[i] = data[i*cols + dcol];
+		// TODO_EB: revise this normalisation here. Probably not the most elegant place
+		if (strncmp("H [1/Mpc]", dname, strlen(dname)) == 0) var[i] = var[i]*sqrt(2./3.*fourpiG)/data[(class_background.bt_size-1)*cols + dcol];
+		if (i > 0)
+		{
+			if (a[i] < a[i-1])
+			{
+				COUT << " error in loadBackground (HAVE_CLASS)! a-values are not strictly ordered." << endl;
+				parallel.abortForce();
+			}
+		}
+	}
+
+	free(data);
+
+	qdata = gsl_spline_alloc(gsl_interp_cspline, class_background.bt_size);
+
+	gsl_spline_init(qdata, a, var, class_background.bt_size);
+
+	free(a);
+	free(var);
+}
+
 //////////////////////////
 // loadTransferFunctions (2)
 //////////////////////////
