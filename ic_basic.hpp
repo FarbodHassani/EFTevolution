@@ -2141,6 +2141,14 @@ void generateIC_basic(metadata & sim, icsettings & ic, cosmology & cosmo, const 
       loadTransferFunctions(class_background, class_perturbs, tk_d_kess, tk_t_kess, "vx", sim.boxsize, sim.z_in, cosmo.h);
           // cout<<"z: "<<-1+1./(a)<<"Hconf_class: "<<Hconf_class( a, cosmo)<<"Hgev: "<<Hconf(a, fourpiG, cosmo)<<endl;
 
+    // BG test:
+    gsl_spline * bg_data = NULL;
+    gsl_interp_accel * acc_bg_data;
+    acc_bg_data = gsl_interp_accel_alloc();
+    loadBGFunctions(class_background, bg_data, "H [1/Mpc]", sim.z_in);
+    cout<<"value H: "<<gsl_spline_eval(bg_data,1.001,acc_bg_data)<<endl;
+
+
     npts = tk_d_kess->size;
     kess_field = (double *) malloc(npts * sizeof(double));
     kess_field_prime = (double *) malloc(npts * sizeof(double));
@@ -2154,14 +2162,14 @@ void generateIC_basic(metadata & sim, icsettings & ic, cosmology & cosmo, const 
       // In the below by (tk_t_kess->y[i]/(tk_d_kess->x[i] * cosmo.h)/(tk_d_kess->x[i] * cosmo.h) we wasily make pi_k_Newtonian from theta_kess as we do to make initial condition in python from class data! The rest is what we do to the pi_k to make it ready for pi_k as initial condition in k-evolution
       k_ess[i] = tk_d_kess->x[i];
 
-      kess_field[i] =  - M_PI * (tk_d_kess->y[i]*Hconf_class(1.0, cosmo)/Hconf(1., fourpiG, cosmo)) * sqrt(  Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
+      kess_field[i] =  - M_PI * tk_d_kess->y[i] * sqrt(  Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
        / tk_t_kess->x[i];
       // zeta according to the definitions below:
       // zeta = pi'(conformal_Newtonian) + H(conf)*pi - psi
       // pi'(conformal_Newtonian) = cs^2/(1+w) delta_fld + Psi + H(conf)*pi (3 cs^2 -1)
       // So zeta = cs^2/(1+w) delta + 3 cs^2 H(conf) * pi
       //
-      kess_field_prime[i] = - M_PI * (tk_t_kess->y[i]) * sqrt( Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
+      kess_field_prime[i] = - M_PI * tk_t_kess->y[i] * sqrt( Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
        / tk_t_kess->x[i];
     }
     // Field realization
@@ -2212,12 +2220,13 @@ void generateIC_basic(metadata & sim, icsettings & ic, cosmology & cosmo, const 
       // Since pi in Length unit in hiclass to make it consistent we multiply to H_hiclass and devide by H_Gevolution!
       // We dont need to do the top command, instead we can convert Mpc to comoving box in Gevolution by multiplying to 1/Boxsize.
       // Why "-" is here? and where is sqrt(2)?
+        k_ess[i] = tk_d_kess->x[i];
         kess_field[i] =  - M_PI * tk_d_kess->y[i] * sqrt(  Pk_primordial(tk_d_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_d_kess->x[i])
          / tk_d_kess->x[i];
         // zeta
         kess_field_prime[i] = - M_PI * tk_t_kess->y[i] * sqrt( Pk_primordial(tk_t_kess->x[i] * cosmo.h / sim.boxsize, ic)/ tk_t_kess->x[i])
          / tk_t_kess->x[i];
-        k_ess[i] = tk_d_kess->x[i];
+
       }
       // Field realization
       gsl_spline_free(tk_d_kess);

@@ -553,7 +553,7 @@ void loadTransferFunctions(background & class_background, perturbs & class_pertu
 //
 //////////////////////////
 
-void loadBGFunctions(background & class_background, mg_cosmology & quintessence, gsl_spline * & bg_data, const char * qname, double z_in)
+void loadBGFunctions(background & class_background, gsl_spline * & bg_data, const char * qname, double z_in)
 {
 	int cols = 0, bgcol = -1, zcol = -1;
 	double * a;
@@ -563,8 +563,7 @@ void loadBGFunctions(background & class_background, mg_cosmology & quintessence,
 	char zname[8];
 	char * ptr;
   int bg_size=0;
-  int num_points=30;
-  double dz=0.005/num_points;
+  double dz=0.005;
   double z1,z2;
 
 	background_output_titles(&class_background, coltitles);
@@ -591,8 +590,8 @@ void loadBGFunctions(background & class_background, mg_cosmology & quintessence,
   background_output_data(&class_background, cols, data);
   for(bg_size=0;data[bg_size*cols + zcol]>z_in * 1.1;bg_size++){};
 
-	a = (double *) malloc(sizeof(double) * (class_background.bt_size-bg_size+num_points));
-	bg = (double *) malloc(sizeof(double) * (class_background.bt_size-bg_size+num_points));
+	a = (double *) malloc(sizeof(double) * (class_background.bt_size-bg_size+1));
+	bg = (double *) malloc(sizeof(double) * (class_background.bt_size-bg_size+1));
   if(!a || !bg)
   {
     COUT << " error in loadBGFunctions (HAVE_CLASS_BG)! Unable to allocate memory!" << endl;
@@ -615,18 +614,17 @@ void loadBGFunctions(background & class_background, mg_cosmology & quintessence,
       }
   }
 
-  for (int i=0;i<num_points;i++)
-  {
-    z1 = 1./a[class_background.bt_size-bg_size+i-1] -1.;
-    z2 = 1./a[class_background.bt_size-bg_size+i-2] -1.;
-    a[class_background.bt_size-bg_size+i] =  a[class_background.bt_size-bg_size+i-1] + 1./(1.+dz);
-    bg[class_background.bt_size-bg_size+i] = bg[class_background.bt_size-bg_size+i-1] - dz *(bg[class_background.bt_size-bg_size+i-1] -  bg[class_background.bt_size-bg_size+i-2])/(z1 - z2);
-  }
+
+    z1 = 1./a[class_background.bt_size-bg_size-1] -1.;
+    z2 = 1./a[class_background.bt_size-bg_size-2] -1.;
+    a[class_background.bt_size-bg_size] =  a[class_background.bt_size-bg_size-1] + 1./(1.+dz);
+    bg[class_background.bt_size-bg_size] = bg[class_background.bt_size-bg_size-1] - dz *(bg[class_background.bt_size-bg_size-1] -  bg[class_background.bt_size-bg_size-2])/(z1 - z2);
+
   // cout<<"z0: "<<a[class_background.bt_size-bg_size-1]<<" a_neg"<<a[class_background.bt_size-bg_size]<<" H0:"<<bg[class_background.bt_size-bg_size-1]<<" H1: "<<bg[class_background.bt_size-bg_size]<<endl;
 
 	free(data);
-	bg_data = gsl_spline_alloc(gsl_interp_cspline, class_background.bt_size-bg_size+num_points);
-	gsl_spline_init(bg_data, a, bg, class_background.bt_size-bg_size+num_points);
+	bg_data = gsl_spline_alloc(gsl_interp_cspline, class_background.bt_size-bg_size+1);
+	gsl_spline_init(bg_data, a, bg, class_background.bt_size-bg_size+1);
 
 	free(a);
 	free(bg);
