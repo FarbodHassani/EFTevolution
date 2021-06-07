@@ -563,7 +563,7 @@ void loadBGFunctions(background & class_background, gsl_spline * & bg_data, cons
 	char zname[8];
 	char * ptr;
   int bg_size=0;
-  double dz=0.005;
+  double dz=0.05;
   double z1,z2;
 
 	background_output_titles(&class_background, coltitles);
