@@ -478,7 +478,7 @@ void loadTransferFunctions(background & class_background, perturbs & class_pertu
 	char coltitles[_MAXTITLESTRINGLENGTH_] = {0};
 	char dname[16];
 	char tname[16];
-	char kname[8];
+	char kname[16];
 	char * ptr;
   // hiclass bg inputs
   double a = 1./(1.+z);
