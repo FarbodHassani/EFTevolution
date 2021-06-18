@@ -1,7 +1,9 @@
 # programming environment
-COMPILER     := /usr/local/bin/mpic++
-INCLUDE      := -I/Users/farbod/Documents/GitHub/hi_class_pub_devel/include -I/usr/local/Cellar/fftw/3.3.9/include -I/usr/local/Cellar/gsl/2.6/include -I/usr/local/Cellar/hdf5/1.12.0_1/include -I./../LATfield2 # add the path to LATfield2 and other libraries (if necessary)
-LIB          := -L/Users/farbod/Documents/GitHub/hi_class_pub_devel -L/usr/local/Cellar/hdf5/1.12.0_1/lib -L/usr/local/Cellar/gsl/2.6/lib  -L/usr/local/Cellar/fftw/3.3.9/lib -lfftw3 -lm -lhdf5 -lgsl -lgslcblas -lclass
+CLASSPATH = /home/emilio/Codes/hi_class_pub_devel
+COMPILER     := mpic++
+INCLUDE      := -I /home/emilio/Codes/LATfield2 -I /usr/lib/x86_64-linux-gnu/hdf5/serial/include -I $(CLASSPATH)/include #-I $(CLASSPATH)/external/HyRec2020 -I $(CLASSPATH)/external/RecfastCLASS -I $(CLASSPATH)/external/heating # add the path to LATfield2 and other libraries (if necessary)
+LIB          := -lfftw3 -lm -lhdf5 -lgsl -lgslcblas -lclass -L /usr/lib/x86_64-linux-gnu/hdf5/serial/lib -L $(CLASSPATH)
+#HPXCXXLIB    := -lhealpix_cxx -lcfitsio
 
 # target and source
 EXEC         := gevolution
@@ -42,5 +44,3 @@ lcmap: lcmap.cpp
 
 clean:
 	-rm -f $(EXEC) lccat lcmap
-
-

@@ -117,6 +117,8 @@ int main(int argc, char **argv)
 	cosmology cosmo;
 	icsettings ic;
 	double T00hom;
+	//Background variables EFTevolution //TODO_EB: add as many as necessary
+	double cs2;
 
 #ifndef H5_DEBUG
 	H5Eset_auto2 (H5E_DEFAULT, NULL, NULL);
@@ -395,6 +397,13 @@ perturbs class_perturbs;
 	a = 1. / (1. + sim.z_in);
 	tau = particleHorizon(a, fourpiG, cosmo);
 
+
+	initializeCLASSstructures(sim, ic, cosmo, class_background, class_thermo, class_perturbs, params, numparam);
+	gsl_interp_accel * acc = gsl_interp_accel_alloc();
+	gsl_spline * myHconf = NULL;
+	loadBackground(class_background, fourpiG, myHconf, "H [1/Mpc]");
+	printf("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP. %e, %e, %e, %e, %e\n", sim.z_in, gsl_spline_eval(myHconf, a, acc), Hconf(a, fourpiG, cosmo),3./2.*pow(Hconf(1., fourpiG, cosmo),2.)/fourpiG, 3./2.*pow(gsl_spline_eval(myHconf, 1., acc),2.)/fourpiG);//TODO_EB
+
 	if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG, cosmo))
 		// dtau = sim.Cf * dx / sim.nKe_numsteps;
     dtau = sim.Cf * dx;
@@ -431,6 +440,7 @@ perturbs class_perturbs;
 		parallel.abortForce();
 	}
 
+
 	numspecies = 1 + sim.baryon_flag + cosmo.num_ncdm;
 	parallel.max<double>(maxvel, numspecies);
 
@@ -463,7 +473,6 @@ perturbs class_perturbs;
 #else
 	COUT << COLORTEXT_GREEN << " initialization complete." << COLORTEXT_RESET << endl << endl;
 #endif
-
 #ifdef HAVE_CLASS
 	if (sim.radiation_flag > 0 || sim.fluid_flag > 0)
 	{
