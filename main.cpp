@@ -398,11 +398,15 @@ perturbs class_perturbs;
 	tau = particleHorizon(a, fourpiG, cosmo);
 
 
+	#ifdef HAVE_CLASS
+	#ifdef HAVE_CLASS_BG
 	initializeCLASSstructures(sim, ic, cosmo, class_background, class_thermo, class_perturbs, params, numparam);
 	gsl_interp_accel * acc = gsl_interp_accel_alloc();
 	gsl_spline * myHconf = NULL;
-	loadBackground(class_background, myHconf, "H [1/Mpc]", sim.z_in);
+	loadBGFunctions(class_background, myHconf, "H [1/Mpc]", sim.z_in);
 	printf("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP. %e, %e, %e, %e, %e\n", sim.z_in, gsl_spline_eval(myHconf, a, acc), Hconf(a, fourpiG, cosmo),3./2.*pow(Hconf(1., fourpiG, cosmo),2.)/fourpiG, 3./2.*pow(gsl_spline_eval(myHconf, 1., acc),2.)/fourpiG);//TODO_EB
+	#endif
+	#endif
 
 	if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG, cosmo))
 		// dtau = sim.Cf * dx / sim.nKe_numsteps;

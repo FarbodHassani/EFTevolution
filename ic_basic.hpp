@@ -2142,11 +2142,13 @@ void generateIC_basic(metadata & sim, icsettings & ic, cosmology & cosmo, const 
           // cout<<"z: "<<-1+1./(a)<<"Hconf_class: "<<Hconf_class( a, cosmo)<<"Hgev: "<<Hconf(a, fourpiG, cosmo)<<endl;
 
     // BG test:
+		#ifdef HAVE_CLASS_BG
     gsl_spline * bg_data = NULL;
     gsl_interp_accel * acc_bg_data;
     acc_bg_data = gsl_interp_accel_alloc();
-    loadBackground(class_background, bg_data, "H [1/Mpc]", sim.z_in);
+    loadBGFunctions(class_background, bg_data, "H [1/Mpc]", sim.z_in);
     cout<<"value H: "<<gsl_spline_eval(bg_data,1.001,acc_bg_data)<<endl;
+		#endif
 
 
     npts = tk_d_kess->size;

@@ -553,7 +553,7 @@ void loadTransferFunctions(background & class_background, perturbs & class_pertu
 //
 //////////////////////////
 
-void loadBackground(background & class_background, gsl_spline * & bg_data, const char * qname, double z_in)
+void loadBGFunctions(background & class_background, gsl_spline * & bg_data, const char * qname, double z_in)
 {
 	int cols = 0, bgcol = -1, zcol = -1;
 	char coltitles[_MAXTITLESTRINGLENGTH_] = {0};
@@ -583,7 +583,7 @@ void loadBackground(background & class_background, gsl_spline * & bg_data, const
 
 	if (bgcol < 0 || zcol < 0)
 	{
-		COUT << " error in loadBackground (HAVE_CLASS)! Unable to identify requested columns!" << endl;
+		COUT << " error in loadBGFunctions (HAVE_CLASS)! Unable to identify requested columns!" << endl;
 		parallel.abortForce();
 	}
 
@@ -613,7 +613,7 @@ void loadBackground(background & class_background, gsl_spline * & bg_data, const
 		{
 			if (a[i-bg_size] < a[i-bg_size-1])
 			{
-				COUT << " error in loadBackground (HAVE_CLASS)! a-values are not strictly ordered." << endl;
+				COUT << " error in loadBGFunctions (HAVE_CLASS)! a-values are not strictly ordered." << endl;
 				parallel.abortForce();
 			}
 		}
