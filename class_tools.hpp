@@ -634,7 +634,6 @@ void loadBGFunctions(background & class_background, gsl_spline * & bg_data, cons
 	free(bg);
 }
 
-
 #endif
 
 #endif

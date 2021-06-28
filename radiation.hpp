@@ -54,6 +54,13 @@ void projection_T00_project(background & class_background, perturbs & class_pert
 	double rescale, Omega_ncdm = 0., Omega_rad = 0., Omega_fld = 0.;
 	Site x(source.lattice());
 	rKSite kFT(scalarFT.lattice());
+	#ifdef HAVE_CLASS_BG
+	gsl_interp_accel * acc = gsl_interp_accel_alloc();
+	//Background variables EFTevolution //TODO_EB: add as many as necessary
+	gsl_spline * H_spline = NULL;
+	//TODO_EB:add BG functions here
+	loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
+	#endif
 
 	if (a < 1. / (sim.z_switch_deltarad + 1.) && cosmo.Omega_g > 0 && sim.radiation_flag == 1)
 	{
@@ -170,7 +177,13 @@ void projection_T00_project(background & class_background, perturbs & class_pert
 		if (sim.gr_flag == 0) // add gauge correction for N-body gauge
 		{
 			loadTransferFunctions(class_background, class_perturbs, tk1, tk2, "tot", sim.boxsize, (1. / a) - 1., cosmo.h);
-			rescale = Hconf(a, fourpiG, cosmo);
+			rescale = Hconf(a, fourpiG,//TODO_EB
+				#ifdef HAVE_CLASS_BG
+					H_spline, acc
+				#else
+					cosmo
+				#endif
+				);
 
 			for (i = 0; i < n; i++)
 				delta[i] -= coeff * (4. * Omega_rad / a + 3. * Omega_ncdm + 3. * (1. + cosmo.w_kessence) * Omega_fld) * rescale * M_PI * tk2->y[i] * sqrt(Pk_primordial(tk2->x[i] * cosmo.h / sim.boxsize, ic) / tk2->x[i]) / tk2->x[i] / tk2->x[i] / tk2->x[i];
@@ -226,6 +239,13 @@ void prepareFTchiLinear(background & class_background, perturbs & class_perturbs
 	double * chi = NULL;
 	int i;
 	rKSite k(scalarFT.lattice());
+	#ifdef HAVE_CLASS_BG
+	gsl_interp_accel * acc = gsl_interp_accel_alloc();
+	//Background variables EFTevolution //TODO_EB: add as many as necessary
+	gsl_spline * H_spline = NULL;
+	//TODO_EB:add BG functions here
+	loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
+	#endif
 
 	loadTransferFunctions(class_background, class_perturbs, tk1, tk2, NULL, sim.boxsize, (1. / a) - 1., cosmo.h);
 
@@ -241,11 +261,41 @@ void prepareFTchiLinear(background & class_background, perturbs & class_perturbs
 		double * l3 = (double *) malloc(tk1->size * sizeof(double));
 		double * l4 = (double *) malloc(tk1->size * sizeof(double));
 		double * l5 = (double *) malloc(tk1->size * sizeof(double));
-		double Hconf1 = Hconf(0.99 * a, fourpiG, cosmo);
-		double Hconf2 = Hconf(0.995 * a, fourpiG, cosmo);
-		double Hconf3 = Hconf(a, fourpiG, cosmo);
-		double Hconf4 = Hconf(1.005 * a, fourpiG, cosmo);
-		double Hconf5 = Hconf(1.01 * a, fourpiG, cosmo);
+		double Hconf1 = Hconf(0.99 * a, fourpiG,//TODO_EB
+			#ifdef HAVE_CLASS_BG
+				H_spline, acc
+			#else
+				cosmo
+			#endif
+			);
+		double Hconf2 = Hconf(0.995 * a, fourpiG,//TODO_EB
+			#ifdef HAVE_CLASS_BG
+				H_spline, acc
+			#else
+				cosmo
+			#endif
+			);
+		double Hconf3 = Hconf(a, fourpiG,//TODO_EB
+			#ifdef HAVE_CLASS_BG
+				H_spline, acc
+			#else
+				cosmo
+			#endif
+			);
+		double Hconf4 = Hconf(1.005 * a, fourpiG,//TODO_EB
+			#ifdef HAVE_CLASS_BG
+				H_spline, acc
+			#else
+				cosmo
+			#endif
+			);
+		double Hconf5 = Hconf(1.01 * a, fourpiG,//TODO_EB
+			#ifdef HAVE_CLASS_BG
+				H_spline, acc
+			#else
+				cosmo
+			#endif
+			);
 
 		for (i = 0; i < tk1->size; i++)
 			l3[i] = -tk1->y[i];
