@@ -35,10 +35,10 @@ OPT          := -O3 -std=c++11
 
 $(EXEC): $(SOURCE) $(HEADERS) makefile
 	$(COMPILER) $< -o $@ $(OPT) $(DLATFIELD2) $(DGEVOLUTION) $(DEFTEVOLUTION) $(INCLUDE) $(LIB)
-	
+
 lccat: lccat.cpp
 	$(COMPILER) $< -o $@ $(OPT) $(DGEVOLUTION) $(DEFTEVOLUTION) $(INCLUDE)
-	
+
 lcmap: lcmap.cpp
 	$(COMPILER) $< -o $@ $(OPT) -fopenmp $(DGEVOLUTION) $(DEFTEVOLUTION) $(INCLUDE) $(LIB) $(HPXCXXLIB)
 
