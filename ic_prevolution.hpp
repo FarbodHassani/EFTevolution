@@ -124,11 +124,6 @@ void generateIC_prevolution(metadata & sim, icsettings & ic, cosmology & cosmo, 
 	pscatter = (Real *) malloc(sim.numbins * sizeof(Real));
 	occupation = (int *) malloc(sim.numbins * sizeof(int));
 
-	a = 1. / (1. + ic.z_ic);
-	tau = particleHorizon(a, fourpiG, cosmo);
-
-	COUT << " initial particle horizon tau = " << tau * sim.numpts << " lattice units." << endl;
-
 	initializeCLASSstructures(sim, ic, cosmo, class_background, class_perturbs, class_spectra, params, numparam);
 
 	#ifdef HAVE_CLASS_BG
@@ -138,6 +133,17 @@ void generateIC_prevolution(metadata & sim, icsettings & ic, cosmology & cosmo, 
 	//TODO_EB:add BG functions here
 	loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
 	#endif
+
+	a = 1. / (1. + ic.z_ic);
+	tau = particleHorizon(a, fourpiG,
+		#ifdef HAVE_CLASS_BG
+		class_background
+		#else
+		cosmo
+		#endif
+	);
+
+	COUT << " initial particle horizon tau = " << tau * sim.numpts << " lattice units." << endl;
 
 	double Hc = Hconf(a, fourpiG,//TODO_EB
 		#ifdef HAVE_CLASS_BG

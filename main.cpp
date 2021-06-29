@@ -404,23 +404,14 @@ loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
 	fourpiG = 1.5 * sim.boxsize * sim.boxsize / C_SPEED_OF_LIGHT / C_SPEED_OF_LIGHT; // Just a definition to make Friedmann equation simplified! and working with normal numbers
   // cout<<"Gevolution H0: "<<sqrt(2. * fourpiG / 3.)<<endl;
   // cout<<"Box: "<<sim.boxsize<<endl;
-
-	// double tau2;
-	// background_tau_of_z(&class_background, sim.z_in, tau2);
-	a = 1.;//TODO_EB
-	tau = particleHorizon(a, fourpiG, cosmo);
-	printf("HERE 1: %e, %e\n", a, tau);
-	double tau2;
-	double z2 = 1.;
-	background_tau_of_z(&class_background, z2, &tau2);
-	printf("HERE 3: %e, %e\n", a, tau2);
-	// background_tau_of_z(&class_background, 0., &tau2);
-	// printf("HERE 3: %e, %e\n", a, tau2);
 	a = 1. / (1. + sim.z_in);
-	tau = particleHorizon(a, fourpiG, cosmo);
-	printf("HERE 2: %e, %e\n", a, tau);
-	// background_tau_of_z(&class_background, sim.z_in, & tau2);
-	// printf("HERE 4: %e, %e\n", a, tau2);
+	tau = particleHorizon(a, fourpiG,
+		#ifdef HAVE_CLASS_BG
+		class_background
+		#else
+		cosmo
+		#endif
+	);
 
 	if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG,//TODO_EB
 		#ifdef HAVE_CLASS_BG
@@ -1088,7 +1079,7 @@ if (sim.Kess_source_gravity==1)
 if (sim.num_lightcone > 0)
   writeLightcones(sim, cosmo, fourpiG, a, tau, dtau, dtau_old, maxvel[0], cycle, h5filename + sim.basename_lightcone,
 		#ifdef HAVE_CLASS_BG
-		H_spline, acc,
+		class_background, H_spline, acc,
 		#endif
 		&pcls_cdm, &pcls_b, pcls_ncdm, &phi, &chi, &Bi, &Sij, &BiFT, &SijFT, &plan_Bi, &plan_Sij, done_hij, IDbacklog);
 else done_hij = 0;

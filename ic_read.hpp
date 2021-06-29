@@ -310,7 +310,13 @@ void readIC(metadata & sim, icsettings & ic, cosmology & cosmo, const double fou
 	if (ic.restart_tau > 0.)
 		tau = ic.restart_tau;
 	else
-		tau = particleHorizon(a, fourpiG, cosmo);
+		tau = particleHorizon(a, fourpiG,
+			#ifdef HAVE_CLASS_BG
+			class_background
+			#else
+			cosmo
+			#endif
+		);
 
 	if (ic.restart_dtau > 0.)
 		dtau_old = ic.restart_dtau;
@@ -560,7 +566,13 @@ void readIC(metadata & sim, icsettings & ic, cosmology & cosmo, const double fou
 				}
 			}
 
-			d = particleHorizon(1. / (1. + sim.lightcone[i].z), fourpiG, cosmo);
+			d = particleHorizon(1. / (1. + sim.lightcone[i].z), fourpiG,
+				#ifdef HAVE_CLASS_BG
+				class_background
+				#else
+				cosmo
+				#endif
+			);
 			if (sim.out_lightcone[i] & MASK_GADGET && sim.lightcone[i].distance[0] > d - tau + 0.5 * dtau_old && sim.lightcone[i].distance[1] <= d - tau + 0.5 * dtau_old && d - tau + 0.5 * dtau_old > 0.)
 			{
 				for (p = 0; p < 1 + sim.baryon_flag + cosmo.num_ncdm; p++)

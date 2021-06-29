@@ -565,7 +565,7 @@ if (sim.out_snapshot & MASK_T_KESS)
 
 void writeLightcones(metadata & sim, cosmology & cosmo, const double fourpiG, const double a, const double tau, const double dtau, const double dtau_old, const double maxvel, const int cycle, string h5filename,
 #ifdef HAVE_CLASS_BG
-gsl_spline * H_spline, gsl_interp_accel * acc,
+background & class_background, gsl_spline * H_spline, gsl_interp_accel * acc,
 #endif
 Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_cdm, Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_b, Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_ncdm, Field<Real> * phi, Field<Real> * chi, Field<Real> * Bi, Field<Real> * Sij, Field<Cplx> * BiFT, Field<Cplx> * SijFT, PlanFFT<Cplx> * plan_Bi, PlanFFT<Cplx> * plan_Sij, int & done_hij, set<long> * IDbacklog)
 {
@@ -653,7 +653,13 @@ Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_c
 			}
 		}
 
-		d = particleHorizon(1. / (1. + sim.lightcone[i].z), fourpiG, cosmo);
+		d = particleHorizon(1. / (1. + sim.lightcone[i].z), fourpiG,
+			#ifdef HAVE_CLASS_BG
+			class_background
+			#else
+			cosmo
+			#endif
+		);
 
 		s[0] = d - tau - 0.5 * sim.covering[i] * dtau;
 		s[1] = d - tau + 0.5 * sim.covering[i] * dtau_old;
