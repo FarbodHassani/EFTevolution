@@ -172,12 +172,15 @@ int main(int argc, char **argv)
 			numparam = 0;
 
 	#ifdef HAVE_CLASS_BG
+	gsl_interp_accel * acc = gsl_interp_accel_alloc();
+	gsl_spline * H_spline = NULL;
 	initializeCLASSstructures(sim, ic, cosmo, class_background, class_thermo, class_perturbs, params, numparam);
+	loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
 	#endif
 
 	double tauobs = particleHorizon(1, 1.5 * sim.boxsize * sim.boxsize / C_SPEED_OF_LIGHT / C_SPEED_OF_LIGHT,
 		#ifdef HAVE_CLASS_BG
-		class_background
+		gsl_spline_eval(H_spline, 1., acc), class_background
 		#else
 		cosmo
 		#endif

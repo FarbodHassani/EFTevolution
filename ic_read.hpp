@@ -312,7 +312,7 @@ void readIC(metadata & sim, icsettings & ic, cosmology & cosmo, const double fou
 	else
 		tau = particleHorizon(a, fourpiG,
 			#ifdef HAVE_CLASS_BG
-			class_background
+			gsl_spline_eval(H_spline, 1., acc), class_background
 			#else
 			cosmo
 			#endif
@@ -568,7 +568,7 @@ void readIC(metadata & sim, icsettings & ic, cosmology & cosmo, const double fou
 
 			d = particleHorizon(1. / (1. + sim.lightcone[i].z), fourpiG,
 				#ifdef HAVE_CLASS_BG
-				class_background
+				gsl_spline_eval(H_spline, 1., acc), class_background
 				#else
 				cosmo
 				#endif

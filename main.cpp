@@ -407,7 +407,7 @@ loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
 	a = 1. / (1. + sim.z_in);
 	tau = particleHorizon(a, fourpiG,
 		#ifdef HAVE_CLASS_BG
-		class_background
+		gsl_spline_eval(H_spline, 1., acc), class_background
 		#else
 		cosmo
 		#endif

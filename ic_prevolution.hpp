@@ -137,7 +137,7 @@ void generateIC_prevolution(metadata & sim, icsettings & ic, cosmology & cosmo, 
 	a = 1. / (1. + ic.z_ic);
 	tau = particleHorizon(a, fourpiG,
 		#ifdef HAVE_CLASS_BG
-		class_background
+		gsl_spline_eval(H_spline, 1., acc), class_background
 		#else
 		cosmo
 		#endif

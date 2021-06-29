@@ -313,20 +313,16 @@ double particleHorizonIntegrand(double sqrta, void * cosmo)
 
 double particleHorizon(const double a, const double fourpiG,
 	#ifdef HAVE_CLASS_BG
-	background & class_background
+	const double H_spline_0, background & class_background
 	#else
 	cosmology & cosmo
 	#endif
 )
 {
 	#ifdef HAVE_CLASS_BG
-	double tau, norm;
-	gsl_spline * H_spline = NULL;
-	gsl_interp_accel * acc = gsl_interp_accel_alloc();
-	loadBGFunctions(class_background, H_spline, "H [1/Mpc]", 100.);//TODO_EB
+	double tau;
 	background_tau_of_z(&class_background, 1./a - 1., &tau);
-	norm = sqrt(2./3.*fourpiG)/gsl_spline_eval(H_spline, 1., acc);
-	return tau/norm;
+	return tau*H_spline_0/sqrt(2./3.*fourpiG);
 	#else
 	double result;
 	gsl_function f;

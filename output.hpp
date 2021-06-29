@@ -655,7 +655,7 @@ Particles_gevolution<part_simple,part_simple_info,part_simple_dataType> * pcls_c
 
 		d = particleHorizon(1. / (1. + sim.lightcone[i].z), fourpiG,
 			#ifdef HAVE_CLASS_BG
-			class_background
+			gsl_spline_eval(H_spline, 1., acc), class_background
 			#else
 			cosmo
 			#endif
