@@ -121,6 +121,10 @@ int main(int argc, char **argv)
 	gsl_interp_accel * acc = gsl_interp_accel_alloc();
 	//Background variables EFTevolution //TODO_EB: add as many as necessary
 	gsl_spline * H_spline = NULL;
+	gsl_spline * cs2_spline = NULL;
+	gsl_spline * rho_smg_spline = NULL;
+	gsl_spline * p_smg_spline = NULL;
+	gsl_spline * rho_crit_spline = NULL;
 	#endif
 
 #ifndef H5_DEBUG
@@ -219,6 +223,10 @@ perturbs class_perturbs;
 //TODO_EB:add BG functions here
 initializeCLASSstructures(sim, ic, cosmo, class_background, class_thermo, class_perturbs, params, numparam);
 loadBGFunctions(class_background, H_spline, "H [1/Mpc]", sim.z_in);
+loadBGFunctions(class_background, cs2_spline, "c_s^2", sim.z_in);
+loadBGFunctions(class_background, rho_smg_spline, "(.)rho_smg", sim.z_in);
+loadBGFunctions(class_background, p_smg_spline, "(.)p_smg", sim.z_in);
+loadBGFunctions(class_background, rho_crit_spline, "(.)rho_crit", sim.z_in);
 #endif
 
 
@@ -625,23 +633,35 @@ string str_filename3 ;
 	//******************************************************************
 	//  	if (sim.vector_flag == VECTOR_ELLIPTIC)
 	// 		{
-	// 			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, chi, pi_k, zeta_integer_k, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a, fourpiG,//TODO_EB
-	// #ifdef HAVE_CLASS_BG
-	// 	H_spline, acc
-	// #else
-	// 	cosmo
-	// #endif
-	// ), fourpiG, 1 );
+				// projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, chi, pi_k, zeta_integer_k,
+				// 	#ifdef HAVE_CLASS_BG
+				// 	gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
+				// 	gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
+				// 	gsl_spline_eval(cs2_spline, a, acc),
+				// 	Hconf(a, fourpiG, H_spline, acc)
+				// 	#else
+				// 	cosmo.Omega_kessence,
+				// 	cosmo.w_kessence,
+				// 	cosmo.cs2_kessence,
+				// 	Hconf(a, fourpiG, cosmo)
+				// 	#endif
+				// 	, fourpiG, 1 );
 	// 		}
 	//  	else
 	// 		{
-	// 			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, chi, pi_k, zeta_integer_k, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a, fourpiG,//TODO_EB
-	// #ifdef HAVE_CLASS_BG
-	// 	H_spline, acc
-	// #else
-	// 	cosmo
-	// #endif
-	// ), fourpiG, 0 );
+	// 			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, chi, pi_k, zeta_integer_k,
+						// #ifdef HAVE_CLASS_BG
+						// gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
+						// gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
+						// gsl_spline_eval(cs2_spline, a, acc),
+						// Hconf(a, fourpiG, H_spline, acc)
+						// #else
+						// cosmo.Omega_kessence,
+						// cosmo.w_kessence,
+						// cosmo.cs2_kessence,
+						// Hconf(a, fourpiG, cosmo)
+						// #endif
+						// , fourpiG, 0 );
 	// 		}
 	//
 // writeSpectra(sim, cosmo, fourpiG, a, pkcount, &pcls_cdm, &pcls_b, pcls_ncdm, &phi, &pi_k, &zeta_half, &chi, &Bi, &T00_Kess, &T0i_Kess, &Tij_Kess, &source, &Sij, &scalarFT ,&scalarFT_pi, &scalarFT_zeta_half, &BiFT, &T00_KessFT, &T0i_KessFT, &Tij_KessFT, &SijFT, &plan_phi, &plan_pi_k, &plan_zeta_half, &plan_chi, &plan_Bi, &plan_T00_Kess, &plan_T0i_Kess, &plan_Tij_Kess, &plan_source, &plan_Sij);
@@ -832,23 +852,35 @@ if (sim.Kess_source_gravity==1)
 // In the projection zeta_integer comes, since synched with particles..
  	if (sim.vector_flag == VECTOR_ELLIPTIC)
 		{
-			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, 	chi, pi_k, zeta_half, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a, fourpiG,//TODO_EB
-			#ifdef HAVE_CLASS_BG
-				H_spline, acc
-			#else
-				cosmo
-			#endif
-				), fourpiG, sim.NL_kessence ,1 );
+			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, 	chi, pi_k, zeta_half,
+				#ifdef HAVE_CLASS_BG
+				gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
+				gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
+				gsl_spline_eval(cs2_spline, a, acc),
+				Hconf(a, fourpiG, H_spline, acc)
+				#else
+				cosmo.Omega_kessence,
+				cosmo.w_kessence,
+				cosmo.cs2_kessence,
+				Hconf(a, fourpiG, cosmo)
+				#endif
+				, fourpiG, sim.NL_kessence ,1 );
 		}
  	else
 		{
-			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, 	chi, pi_k, zeta_half, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a, fourpiG,//TODO_EB
-			#ifdef HAVE_CLASS_BG
-				H_spline, acc
-			#else
-				cosmo
-			#endif
-				), fourpiG, sim.NL_kessence, 0 );
+			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, 	chi, pi_k, zeta_half,
+				#ifdef HAVE_CLASS_BG
+				gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
+				gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
+				gsl_spline_eval(cs2_spline, a, acc),
+				Hconf(a, fourpiG, H_spline, acc)
+				#else
+				cosmo.Omega_kessence,
+				cosmo.w_kessence,
+				cosmo.cs2_kessence,
+				Hconf(a, fourpiG, cosmo)
+				#endif
+				, fourpiG, sim.NL_kessence, 0 );
 		}
 
 		for (x.first(); x.test(); x.next())
@@ -1264,19 +1296,21 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
     for (i=0;i<sim.nKe_numsteps;i++)
     {
       //computing zeta_half(-1/2) and zeta_int(-1) but we do not work with zeta(-1)
-      update_zeta(-dtau/ (2. * sim.nKe_numsteps) , dx, a_kess, phi, phi_old, chi, chi_old, pi_k, zeta_half, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a_kess, fourpiG,//TODO_EB
-			#ifdef HAVE_CLASS_BG
-				H_spline, acc
-			#else
-				cosmo
-			#endif
-		), Hconf_prime(a_kess, fourpiG,//TODO_EB
-			#ifdef HAVE_CLASS_BG
-				H_spline, acc
-			#else
-				cosmo
-			#endif
-			), sim.NL_kessence);
+      update_zeta(-dtau/ (2. * sim.nKe_numsteps) , dx, a_kess, phi, phi_old, chi, chi_old, pi_k, zeta_half,
+				#ifdef HAVE_CLASS_BG
+				gsl_spline_eval(rho_smg_spline, a_kess, acc)/gsl_spline_eval(rho_crit_spline, a_kess, acc),
+				gsl_spline_eval(p_smg_spline, a_kess, acc)/gsl_spline_eval(rho_smg_spline, a_kess, acc),
+				gsl_spline_eval(cs2_spline, a_kess, acc),
+				Hconf(a_kess, fourpiG, H_spline, acc),
+				Hconf_prime(a_kess, fourpiG, H_spline, acc)
+				#else
+				cosmo.Omega_kessence,
+				cosmo.w_kessence,
+				cosmo.cs2_kessence,
+				Hconf(a_kess, fourpiG, cosmo),
+				Hconf_prime(a_kess, fourpiG, cosmo)
+				#endif
+				, sim.NL_kessence);
       // zeta_integer.updateHalo();
       zeta_half.updateHalo();
     }
@@ -1292,19 +1326,21 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
     //\zeta_integer(n+1/2) = \zeta_integer(n-1/2) + \zeta_integer'(n)  dtau
     //We also update zeta_int from n to n+1
     //********************************************************************************
-    update_zeta(dtau/ sim.nKe_numsteps, dx, a_kess, phi, phi_old, chi, chi_old, pi_k, zeta_half, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a_kess, fourpiG,//TODO_EB
-		#ifdef HAVE_CLASS_BG
-			H_spline, acc
-		#else
-			cosmo
-		#endif
-	), Hconf_prime(a_kess, fourpiG,//TODO_EB
-		#ifdef HAVE_CLASS_BG
-			H_spline, acc
-		#else
-			cosmo
-		#endif
-		), sim.NL_kessence);
+    update_zeta(dtau/ sim.nKe_numsteps, dx, a_kess, phi, phi_old, chi, chi_old, pi_k, zeta_half,
+			#ifdef HAVE_CLASS_BG
+			gsl_spline_eval(rho_smg_spline, a_kess, acc)/gsl_spline_eval(rho_crit_spline, a_kess, acc),
+			gsl_spline_eval(p_smg_spline, a_kess, acc)/gsl_spline_eval(rho_smg_spline, a_kess, acc),
+			gsl_spline_eval(cs2_spline, a_kess, acc),
+			Hconf(a_kess, fourpiG, H_spline, acc),
+			Hconf_prime(a_kess, fourpiG, H_spline, acc)
+			#else
+			cosmo.Omega_kessence,
+			cosmo.w_kessence,
+			cosmo.cs2_kessence,
+			Hconf(a_kess, fourpiG, cosmo),
+			Hconf_prime(a_kess, fourpiG, cosmo)
+			#endif
+			, sim.NL_kessence);
     // zeta_integer.updateHalo();
     zeta_half.updateHalo();
     //********************************************************************************
@@ -1322,19 +1358,21 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
     //In the pi update we also update zeta_int because we need the values of a_kess and H_kess at step n+1/2
     //By the below update we get pi(n+1) and zeta(n+1)
     //********************************************************************************
-    update_pi_k(dtau/ sim.nKe_numsteps, dx, a_kess, phi, phi_old, chi, chi_old, pi_k, zeta_half, cosmo.Omega_kessence, cosmo.w_kessence, cosmo.cs2_kessence, Hconf(a_kess, fourpiG,//TODO_EB
-		#ifdef HAVE_CLASS_BG
-			H_spline, acc
-		#else
-			cosmo
-		#endif
-	), Hconf_prime(a_kess, fourpiG,//TODO_EB
-		#ifdef HAVE_CLASS_BG
-			H_spline, acc
-		#else
-			cosmo
-		#endif
-		), sim.NL_kessence); // H_old is updated here in the function
+    update_pi_k(dtau/ sim.nKe_numsteps, dx, a_kess, phi, phi_old, chi, chi_old, pi_k, zeta_half,
+			#ifdef HAVE_CLASS_BG
+			gsl_spline_eval(rho_smg_spline, a_kess, acc)/gsl_spline_eval(rho_crit_spline, a_kess, acc),
+			gsl_spline_eval(p_smg_spline, a_kess, acc)/gsl_spline_eval(rho_smg_spline, a_kess, acc),
+			gsl_spline_eval(cs2_spline, a_kess, acc),
+			Hconf(a_kess, fourpiG, H_spline, acc),
+			Hconf_prime(a_kess, fourpiG, H_spline, acc)
+			#else
+			cosmo.Omega_kessence,
+			cosmo.w_kessence,
+			cosmo.cs2_kessence,
+			Hconf(a_kess, fourpiG, cosmo),
+			Hconf_prime(a_kess, fourpiG, cosmo)
+			#endif
+			, sim.NL_kessence); // H_old is updated here in the function
 		pi_k.updateHalo();
 
     //********************************************************************************
