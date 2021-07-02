@@ -181,7 +181,7 @@ void prepareFTsource(Field<FieldType> & phi, Field<FieldType> & Tij, Field<Field
 //////////////////////////
 template <class FieldType>
 void projection_Tmunu_kessence( Field<FieldType> & T00, Field<FieldType> & T0i, Field<FieldType> & Tij,
-   double dx, double a, Field<FieldType> & phi,Field<FieldType> & phi_old, Field<FieldType> & chi, Field<FieldType> & pi_k, Field<FieldType> & zeta_half, double Omega_fld , double w, double cs2, double Hcon, double fourpig, int non_linearity ,int method )
+   double dx, double a, Field<FieldType> & phi,Field<FieldType> & phi_old, Field<FieldType> & chi, Field<FieldType> & pi_k, Field<FieldType> & zeta_half, double Omega_fld , double w, double cs2, double ca2, double ess, double Hcon, double fourpig, int non_linearity ,int method )
 {
     Site xField(phi.lattice());
     double coeff1, coeff2, coeff3, Hdot, psi;
@@ -403,7 +403,7 @@ void projection_Tmunu_kessence( Field<FieldType> & T00, Field<FieldType> & T0i, 
 			//
 			//////////////////////////
 			template <class FieldType>
-			void update_pi_k( double dtau, double dx,double a, Field<FieldType> & phi, Field<FieldType> & phi_old, Field<FieldType> & chi,Field<FieldType> & chi_old, Field<FieldType> & pi_k , Field<FieldType> & zeta_half, double Omega_fld ,double w, double cs2, double Hcon, double  H_prime, int non_linearity)
+			void update_pi_k( double dtau, double dx,double a, Field<FieldType> & phi, Field<FieldType> & phi_old, Field<FieldType> & chi,Field<FieldType> & chi_old, Field<FieldType> & pi_k , Field<FieldType> & zeta_half, double Omega_fld ,double w, double cs2, double ca2, double ess, double Hcon, double  H_prime, int non_linearity)
 			{
 
         double psi, psi_prime, psi_half;
@@ -440,7 +440,7 @@ void projection_Tmunu_kessence( Field<FieldType> & T00, Field<FieldType> & T0i, 
 			// We use predictor corrector method to calculate \zeta precisely for non-linear case. (for linear equation is does not make better)
       // updating zeta from n-1/2 to n+1/2 by zeta'(n)
 			template <class FieldType>
-			void update_zeta(double dtau, double dx,double a, Field<FieldType> & phi, Field<FieldType> & phi_old, Field<FieldType> & chi, Field<FieldType> & chi_old, Field<FieldType> & pi_k , Field<FieldType> & zeta_half, double Omega_fld ,double w, double cs2, double Hcon, double H_prime, int non_linearity )
+			void update_zeta(double dtau, double dx,double a, Field<FieldType> & phi, Field<FieldType> & phi_old, Field<FieldType> & chi, Field<FieldType> & chi_old, Field<FieldType> & pi_k , Field<FieldType> & zeta_half, double Omega_fld ,double w, double cs2, double ca2, double ess, double Hcon, double H_prime, int non_linearity )
 			  {
         double Gradphi_Gradpi, Gradpsi_Gradpi, Gradpi_Gradpi, GradZeta_Gradpi, Gradi_nablai_pi_Grad_pi_squared, Dx_psi, Dy_psi, Dz_psi;
 			  double C1, C2, C3, psi, psi_old, psi_prime, phi_prime, Laplacian_pi, zeta_old_integer, zeta_old_half ;
