@@ -1685,6 +1685,14 @@ if (ic.IC_kess == 1)
 	{
 			cosmo.w_kessence=-0.9;
 	}
+	if (!parseParameter(params, numparam, "ca2_kessence",  cosmo.ca2_kessence))
+	{
+			cosmo.ca2_kessence=-0.9;
+	}
+	if (!parseParameter(params, numparam, "ess_kessence",  cosmo.ess_kessence))
+	{
+			cosmo.ess_kessence=0.;
+	}
   if (!parseParameter(params, numparam, "nKe_numsteps",  sim.nKe_numsteps))
   {
     sim.nKe_numsteps = 1;
@@ -1834,7 +1842,7 @@ if (ic.IC_kess == 1)
 	{
 		//Kessence part added
     COUT << "Kessence source gravity = " << sim.Kess_source_gravity<< ", Non-linear kessence = " << sim.NL_kessence<< ", Number of kessence update = " <<sim.nKe_numsteps <<endl;
-		COUT << " cosmological parameters are: Omega_m0 = " << cosmo.Omega_m << ", Omega_rad0 = " << cosmo.Omega_rad << ", h = " << cosmo.h << ", Omega_kessence0= "<<cosmo.Omega_kessence<<", w_kessence= "<<cosmo.w_kessence<<", cs^2 (kessence)= "<<cosmo.cs2_kessence<<endl;
+		COUT << " cosmological parameters are: Omega_m0 = " << cosmo.Omega_m << ", Omega_rad0 = " << cosmo.Omega_rad << ", h = " << cosmo.h << ", Omega_kessence0= "<<cosmo.Omega_kessence<<", w_kessence= "<<cosmo.w_kessence<<", cs^2 (kessence)= "<<cosmo.cs2_kessence<<", ca^2 (kessence)= "<<cosmo.ca2_kessence<<endl<<", ess (kessence)= "<<cosmo.ess_kessence;
 		cosmo.Omega_Lambda = 1. - cosmo.Omega_m - cosmo.Omega_kessence - cosmo.Omega_rad;
 	}
 

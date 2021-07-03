@@ -421,7 +421,7 @@ loadBGFunctions(class_background, rho_crit_spline, "(.)rho_crit", sim.z_in);
 		#endif
 	);
 
-	if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG,//TODO_EB
+	if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG,
 		#ifdef HAVE_CLASS_BG
 			H_spline, acc
 		#else
@@ -432,14 +432,14 @@ loadBGFunctions(class_background, rho_crit_spline, "(.)rho_crit", sim.z_in);
     dtau = sim.Cf * dx;
 
 	else
-		// dtau = sim.steplimit / sim.nKe_numsteps / Hconf(a, fourpiG,//TODO_EB
+		// dtau = sim.steplimit / sim.nKe_numsteps / Hconf(a, fourpiG,
 		// 	#ifdef HAVE_CLASS_BG
 		// 		H_spline, acc
 		// 	#else
 		// 		cosmo
 		// 	#endif
 		// );
-    dtau = sim.steplimit / 	Hconf(a, fourpiG,//TODO_EB
+    dtau = sim.steplimit / 	Hconf(a, fourpiG,
 			#ifdef HAVE_CLASS_BG
 				H_spline, acc
 			#else
@@ -638,11 +638,15 @@ string str_filename3 ;
 				// 	gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
 				// 	gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
 				// 	gsl_spline_eval(cs2_spline, a, acc),
+				// gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+				// a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 				// 	Hconf(a, fourpiG, H_spline, acc)
 				// 	#else
 				// 	cosmo.Omega_kessence,
 				// 	cosmo.w_kessence,
 				// 	cosmo.cs2_kessence,
+				// 	cosmo.ca2_kessence,
+				// 	cosmo.ess_kessence,
 				// 	Hconf(a, fourpiG, cosmo)
 				// 	#endif
 				// 	, fourpiG, 1 );
@@ -654,11 +658,15 @@ string str_filename3 ;
 						// gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
 						// gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
 						// gsl_spline_eval(cs2_spline, a, acc),
+						// gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+						// a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 						// Hconf(a, fourpiG, H_spline, acc)
 						// #else
 						// cosmo.Omega_kessence,
 						// cosmo.w_kessence,
 						// cosmo.cs2_kessence,
+						// 	cosmo.ca2_kessence,
+						// 	cosmo.ess_kessence,
 						// Hconf(a, fourpiG, cosmo)
 						// #endif
 						// , fourpiG, 0 );
@@ -696,7 +704,7 @@ string str_filename3 ;
       //****PRINTING AVERAGE OVER TIME
       //****************************
       // check_field(  zeta_half, 1. , " H pi_k", numpts3d);
-      avg_pi =average(  pi_k, Hconf(a, fourpiG,//TODO_EB
+      avg_pi =average(  pi_k, Hconf(a, fourpiG,
 			#ifdef HAVE_CLASS_BG
 				H_spline, acc
 			#else
@@ -706,7 +714,7 @@ string str_filename3 ;
       avg_zeta =average(  zeta_half,1., numpts3d ) ;
       avg_phi =average(  phi , 1., numpts3d ) ;
 
-      max_pi =maximum(  pi_k, Hconf(a, fourpiG,//TODO_EB
+      max_pi =maximum(  pi_k, Hconf(a, fourpiG,
 			#ifdef HAVE_CLASS_BG
 				H_spline, acc
 			#else
@@ -857,11 +865,15 @@ if (sim.Kess_source_gravity==1)
 				gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
 				gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
 				gsl_spline_eval(cs2_spline, a, acc),
+				gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+				a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 				Hconf(a, fourpiG, H_spline, acc)
 				#else
 				cosmo.Omega_kessence,
 				cosmo.w_kessence,
 				cosmo.cs2_kessence,
+				cosmo.ca2_kessence,
+				cosmo.ess_kessence,
 				Hconf(a, fourpiG, cosmo)
 				#endif
 				, fourpiG, sim.NL_kessence ,1 );
@@ -873,11 +885,15 @@ if (sim.Kess_source_gravity==1)
 				gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
 				gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
 				gsl_spline_eval(cs2_spline, a, acc),
+				gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+				a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 				Hconf(a, fourpiG, H_spline, acc)
 				#else
 				cosmo.Omega_kessence,
 				cosmo.w_kessence,
 				cosmo.cs2_kessence,
+				cosmo.ca2_kessence,
+				cosmo.ess_kessence,
 				Hconf(a, fourpiG, cosmo)
 				#endif
 				, fourpiG, sim.NL_kessence, 0 );
@@ -921,7 +937,7 @@ if (sim.Kess_source_gravity==1)
 			if (dtau_old > 0.)
 			{
 
-				double Hc = Hconf(a, fourpiG,//TODO_EB
+				double Hc = Hconf(a, fourpiG,
 					#ifdef HAVE_CLASS_BG
 						H_spline, acc
 					#else
@@ -997,14 +1013,14 @@ if (sim.Kess_source_gravity==1)
 			{
         if (cycle == 0)
           fprintf(outfile, "# background statistics\n# cycle   tau/boxsize    a             conformal H/H0  phi(k=0)       T00(k=0)\n");
-        fprintf(outfile, " %6d   %e   %e   %e   %e   %e\n", cycle, tau, a, Hconf(a, fourpiG,//TODO_EB
+        fprintf(outfile, " %6d   %e   %e   %e   %e   %e\n", cycle, tau, a, Hconf(a, fourpiG,
 				#ifdef HAVE_CLASS_BG
 					H_spline, acc
 				#else
 					cosmo
 				#endif
 				) /
-				Hconf(1., fourpiG,//TODO_EB
+				Hconf(1., fourpiG,
 				#ifdef HAVE_CLASS_BG
 					H_spline, acc
 				#else
@@ -1014,20 +1030,20 @@ if (sim.Kess_source_gravity==1)
         fclose(outfile);
 				// if (cycle == 0)
 				// 	fprintf(outfile, "# background statistics\n# cycle   tau/boxsize    a             conformal H/H0         Hconf_prime       phi(k=0)       T00(k=0)\n");
-				// fprintf(outfile, " %6d   %e   %e   %e   %e   %e   %e\n", cycle, tau, a, Hconf(a, fourpiG,//TODO_EB
+				// fprintf(outfile, " %6d   %e   %e   %e   %e   %e   %e\n", cycle, tau, a, Hconf(a, fourpiG,
 				// #ifdef HAVE_CLASS_BG
 				// 	H_spline, acc
 				// #else
 				// 	cosmo
 				// #endif
 				// ) /
-				// Hconf(1., fourpiG,//TODO_EB
+				// Hconf(1., fourpiG,
 				// #ifdef HAVE_CLASS_BG
 				// 	H_spline, acc
 				// #else
 				// 	cosmo
 				// #endif
-				// ),Hconf_prime(a_kess, fourpiG,//TODO_EB
+				// ),Hconf_prime(a_kess, fourpiG,
 				// #ifdef HAVE_CLASS_BG
 				// 	H_spline, acc
 				// #else
@@ -1256,7 +1272,7 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 				COUT << "), baryon max |v| = " << maxvel[1] << " (Courant factor = " << maxvel[1] * dtau / dx;
 			}
 
-			COUT << "), time step / Hubble time = " << Hconf(a, fourpiG,//TODO_EB
+			COUT << "), time step / Hubble time = " << Hconf(a, fourpiG,
 			#ifdef HAVE_CLASS_BG
 				H_spline, acc
 			#else
@@ -1301,12 +1317,16 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 				gsl_spline_eval(rho_smg_spline, a_kess, acc)/gsl_spline_eval(rho_crit_spline, a_kess, acc),
 				gsl_spline_eval(p_smg_spline, a_kess, acc)/gsl_spline_eval(rho_smg_spline, a_kess, acc),
 				gsl_spline_eval(cs2_spline, a_kess, acc),
+				gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+				a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 				Hconf(a_kess, fourpiG, H_spline, acc),
 				Hconf_prime(a_kess, fourpiG, H_spline, acc)
 				#else
 				cosmo.Omega_kessence,
 				cosmo.w_kessence,
 				cosmo.cs2_kessence,
+				cosmo.ca2_kessence,
+				cosmo.ess_kessence,
 				Hconf(a_kess, fourpiG, cosmo),
 				Hconf_prime(a_kess, fourpiG, cosmo)
 				#endif
@@ -1331,12 +1351,16 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 			gsl_spline_eval(rho_smg_spline, a_kess, acc)/gsl_spline_eval(rho_crit_spline, a_kess, acc),
 			gsl_spline_eval(p_smg_spline, a_kess, acc)/gsl_spline_eval(rho_smg_spline, a_kess, acc),
 			gsl_spline_eval(cs2_spline, a_kess, acc),
+			gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+			a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 			Hconf(a_kess, fourpiG, H_spline, acc),
 			Hconf_prime(a_kess, fourpiG, H_spline, acc)
 			#else
 			cosmo.Omega_kessence,
 			cosmo.w_kessence,
 			cosmo.cs2_kessence,
+			cosmo.ca2_kessence,
+			cosmo.ess_kessence,
 			Hconf(a_kess, fourpiG, cosmo),
 			Hconf_prime(a_kess, fourpiG, cosmo)
 			#endif
@@ -1363,12 +1387,16 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 			gsl_spline_eval(rho_smg_spline, a_kess, acc)/gsl_spline_eval(rho_crit_spline, a_kess, acc),
 			gsl_spline_eval(p_smg_spline, a_kess, acc)/gsl_spline_eval(rho_smg_spline, a_kess, acc),
 			gsl_spline_eval(cs2_spline, a_kess, acc),
+			gsl_spline_eval_deriv(p_smg_spline, a, acc)/gsl_spline_eval_deriv(rho_smg_spline, a, acc),
+			a*gsl_spline_eval_deriv(cs2_spline, a, acc)/gsl_spline_eval(cs2_spline, a, acc),
 			Hconf(a_kess, fourpiG, H_spline, acc),
 			Hconf_prime(a_kess, fourpiG, H_spline, acc)
 			#else
 			cosmo.Omega_kessence,
 			cosmo.w_kessence,
 			cosmo.cs2_kessence,
+			cosmo.ca2_kessence,
+			cosmo.ess_kessence,
 			Hconf(a_kess, fourpiG, cosmo),
 			Hconf_prime(a_kess, fourpiG, cosmo)
 			#endif
@@ -1387,14 +1415,14 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 			dtau  / sim.nKe_numsteps / 2.0);
     #ifdef BACKREACTION_TEST
       //   //Make snapshots and power arround blowup TIME
-      // // max_zeta =maximum(  zeta_half, Hconf(a, fourpiG,//TODO_EB
+      // // max_zeta =maximum(  zeta_half, Hconf(a, fourpiG,
 			// #ifdef HAVE_CLASS_BG
 			// 	H_spline, acc
 			// #else
 			// 	cosmo
 			// #endif
 			// ), numpts3d ) ;
-      // // max_zeta_old =maximum(  zeta_half_old, Hconf(a, fourpiG,//TODO_EB
+      // // max_zeta_old =maximum(  zeta_half_old, Hconf(a, fourpiG,
 			// #ifdef HAVE_CLASS_BG
 			// 	H_spline, acc
 			// #else
@@ -1436,13 +1464,13 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
           // {
           // out_snapshots<<"### 1- tau\t2- z \t3- a\t 4- zeta_avg\t 5- avg_pi\t 6- avg_phi\t 7- tau/boxsize\t 8- H_conf/H0 \t 9- snap_count"<<endl;
 
-          out_snapshots<<setw(9) << tau + dtau/sim.nKe_numsteps <<"\t"<< setw(9) << 1./(a_kess) -1.0 <<"\t"<< setw(9) << a_kess <<"\t"<< setw(9) << avg_zeta <<"\t"<< setw(9) << avg_pi <<"\t"<< setw(9) << avg_phi <<"\t"<< setw(9) <<tau <<"\t"<< setw(9) << Hconf(a_kess, fourpiG,//TODO_EB
+          out_snapshots<<setw(9) << tau + dtau/sim.nKe_numsteps <<"\t"<< setw(9) << 1./(a_kess) -1.0 <<"\t"<< setw(9) << a_kess <<"\t"<< setw(9) << avg_zeta <<"\t"<< setw(9) << avg_pi <<"\t"<< setw(9) << avg_phi <<"\t"<< setw(9) <<tau <<"\t"<< setw(9) << Hconf(a_kess, fourpiG,
 					#ifdef HAVE_CLASS_BG
 						H_spline, acc
 					#else
 						cosmo
 					#endif
-				) / Hconf(1., fourpiG,//TODO_EB
+				) / Hconf(1., fourpiG,
 					#ifdef HAVE_CLASS_BG
 						H_spline, acc
 					#else
@@ -1630,7 +1658,7 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 
 		dtau_old = dtau;
 
-		if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG,//TODO_EB
+		if (sim.Cf * dx < sim.steplimit / Hconf(a, fourpiG,
 		#ifdef HAVE_CLASS_BG
 			H_spline, acc
 		#else
@@ -1639,7 +1667,7 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
 		))
 			dtau = sim.Cf * dx;
 		else
-			dtau = sim.steplimit / Hconf(a, fourpiG,//TODO_EB
+			dtau = sim.steplimit / Hconf(a, fourpiG,
 			#ifdef HAVE_CLASS_BG
 				H_spline, acc
 			#else
