@@ -2206,7 +2206,6 @@ void generateIC_basic(metadata & sim, icsettings & ic, cosmology & cosmo, const 
     gsl_interp_accel * acc_bg_data;
     acc_bg_data = gsl_interp_accel_alloc();
     loadBGFunctions(class_background, bg_data, "H [1/Mpc]", sim.z_in);
-    cout<<"value H: "<<gsl_spline_eval(bg_data,1.001,acc_bg_data)<<endl;
 		#endif
 
 

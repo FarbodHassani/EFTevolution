@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	int  moveParts_count =0;
 	//kessence
 	double a_kess;
-
+  double Hc;
 
 #endif  //BENCHMARK
 
@@ -265,7 +265,6 @@ loadBGFunctions(class_background, rho_crit_spline, "(.)rho_crit", sim.z_in);
 	//kessence
 	Field<Real> phi_old;
   //phi at two step before to compute phi'(n+1/2)
-	Field<Real> phi_prime;
   #ifdef BACKREACTION_TEST
   Field<Real> short_wave;
   Field<Real> relativistic_term;
@@ -282,7 +281,6 @@ loadBGFunctions(class_background, rho_crit_spline, "(.)rho_crit", sim.z_in);
 	Field<Real> T0i_Kess;
 	Field<Real> Tij_Kess;
 	Field<Cplx> scalarFT_phi_old;
-	Field<Cplx> phi_prime_scalarFT;
   #ifdef BACKREACTION_TEST
   Field<Cplx> short_wave_scalarFT;
   Field<Cplx> relativistic_term_scalarFT;
@@ -337,10 +335,6 @@ loadBGFunctions(class_background, rho_crit_spline, "(.)rho_crit", sim.z_in);
 	phi_old.initialize(lat,1);
 	scalarFT_phi_old.initialize(latFT,1);
 	PlanFFT<Cplx> plan_phi_old(&phi_old, &scalarFT_phi_old);
-	//Phi'
-	phi_prime.initialize(lat,1);
-	phi_prime_scalarFT.initialize(latFT,1);
-	PlanFFT<Cplx> phi_prime_plan(&phi_prime, &phi_prime_scalarFT);
   //Relativistic corrections
   #ifdef BACKREACTION_TEST
   short_wave.initialize(lat,1);
@@ -627,54 +621,6 @@ string str_filename2 ;
 string str_filename3 ;
 #endif
 
-	//******************************************************************
-	//Write spectra check!
-	// Kessence projection Tmunu Test IC
-	//******************************************************************
-	//  	if (sim.vector_flag == VECTOR_ELLIPTIC)
-	// 		{
-				// projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, chi, pi_k, zeta_integer_k,
-				// 	#ifdef HAVE_CLASS_BG
-				// 	gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
-				// 	gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
-				// 	gsl_spline_eval(cs2_spline, a, acc),
-				// 	Hconf(a, fourpiG, H_spline, acc)
-				// 	#else
-				// 	cosmo.Omega_kessence,
-				// 	cosmo.w_kessence,
-				// 	cosmo.cs2_kessence,
-				// 	Hconf(a, fourpiG, cosmo)
-				// 	#endif
-				// 	, fourpiG, 1 );
-	// 		}
-	//  	else
-	// 		{
-	// 			projection_Tmunu_kessence( T00_Kess,T0i_Kess,Tij_Kess, dx, a, phi, phi_old, chi, pi_k, zeta_integer_k,
-						// #ifdef HAVE_CLASS_BG
-						// gsl_spline_eval(rho_smg_spline, a, acc)/gsl_spline_eval(rho_crit_spline, a, acc),
-						// gsl_spline_eval(p_smg_spline, a, acc)/gsl_spline_eval(rho_smg_spline, a, acc),
-						// gsl_spline_eval(cs2_spline, a, acc),
-						// Hconf(a, fourpiG, H_spline, acc)
-						// #else
-						// cosmo.Omega_kessence,
-						// cosmo.w_kessence,
-						// cosmo.cs2_kessence,
-						// Hconf(a, fourpiG, cosmo)
-						// #endif
-						// , fourpiG, 0 );
-	// 		}
-	//
-// writeSpectra(sim, cosmo, fourpiG, a, pkcount, &pcls_cdm, &pcls_b, pcls_ncdm, &phi, &pi_k, &zeta_half, &chi, &Bi, &T00_Kess, &T0i_Kess, &Tij_Kess, &source, &Sij, &scalarFT ,&scalarFT_pi, &scalarFT_zeta_half, &BiFT, &T00_KessFT, &T0i_KessFT, &Tij_KessFT, &SijFT, &plan_phi, &plan_pi_k, &plan_zeta_half, &plan_chi, &plan_Bi, &plan_T00_Kess, &plan_T0i_Kess, &plan_Tij_Kess, &plan_source, &plan_Sij);
-
-// writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
-		// #ifdef HAVE_CLASS_BG
-		// H_spline, acc,
-		// #endif
-		// &phi_prime, &phi_prime_scalarFT, &phi_prime_plan);
-
-// writeSpectra(sim, cosmo, fourpiG, a, pkcount, &pcls_cdm, &pcls_b, pcls_ncdm, &phi, &pi_k, &zeta_half, &chi, &Bi, &T00_Kess, &T0i_Kess, &Tij_Kess, &source, &Sij, &scalarFT ,&scalarFT_pi, &scalarFT_zeta_half, &BiFT, &T00_KessFT, &T0i_KessFT, &Tij_KessFT, &SijFT, &plan_phi, &plan_pi_k, &plan_zeta_half, &plan_chi, &plan_Bi, &plan_T00_Kess, &plan_T0i_Kess, &plan_Tij_Kess, &plan_source, &plan_Sij);
-
-
 	while (true)    // main loop
 	{
     //Kessence
@@ -921,7 +867,7 @@ if (sim.Kess_source_gravity==1)
 			if (dtau_old > 0.)
 			{
 
-				double Hc = Hconf(a, fourpiG,//TODO_EB
+				  Hc = Hconf(a, fourpiG,//TODO_EB
 					#ifdef HAVE_CLASS_BG
 						H_spline, acc
 					#else
@@ -1121,11 +1067,6 @@ lightcone_output_time += MPI_Wtime() - ref_time;
 ref_time = MPI_Wtime();
 #endif
 
-for (x.first(); x.test(); x.next())
-{
-  phi_prime(x) =(phi(x)-phi_old(x))/(dtau);
-}
-
 		// snapshot output
 		if (snapcount < sim.num_snapshot && 1. / a < sim.z_snapshot[snapcount] + 1.)
 		{
@@ -1157,14 +1098,6 @@ for (x.first(); x.test(); x.next())
 		{
 			COUT << COLORTEXT_CYAN << " writing power spectra" << COLORTEXT_RESET << " at z = " << ((1./a) - 1.) <<  " (cycle " << cycle << "), tau/boxsize = " << tau << endl;
 
-#ifdef BACKREACTION_TEST
-      writeSpectra_PoissonTerms(sim,  cosmo,  fourpiG,  a, pkcount, &short_wave, &short_wave_scalarFT , &short_wave_plan);
-#endif
-writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
-	#ifdef HAVE_CLASS_BG
-	H_spline, acc,
-	#endif
-	&phi_prime, &phi_prime_scalarFT, &phi_prime_plan);
 
 			writeSpectra(sim, cosmo, fourpiG, a, pkcount,
 #ifdef HAVE_CLASS
@@ -1214,15 +1147,6 @@ writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
     				, &vi, &viFT, &plan_vi
     #endif
 		    );
-    writeSpectra_phi_prime(sim, cosmo, fourpiG, a, pkcount,
-			#ifdef HAVE_CLASS_BG
-			H_spline, acc,
-			#endif
-			&phi_prime, &phi_prime_scalarFT, &phi_prime_plan);
-    #ifdef BACKREACTION_TEST
-    writeSpectra_PoissonTerms(sim,  cosmo,  fourpiG,  a, pkcount, &short_wave, &short_wave_scalarFT , &short_wave_plan);
-    #endif
-    		}
     #endif // EXACT_OUTPUT_REDSHIFTS
 
 
